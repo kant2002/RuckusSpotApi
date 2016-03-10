@@ -31,6 +31,9 @@ namespace Ruckus.Spot.Console
                 case "venue-info":
                     await PrintVenueInfo(configuration, args[4]);
                     break;
+                case "venue-radio-maps":
+                    await PrintVenueRadioMaps(configuration, args[4]);
+                    break;
                 default:
                     System.Console.WriteLine($"Unknown operation {command}");
                     break;
@@ -66,6 +69,17 @@ namespace Ruckus.Spot.Console
             }
 
             System.Console.WriteLine($"Time Zone: {venue.TimeZoneId}");
+        }
+
+        private static async Task PrintVenueRadioMaps(RuckusApiConfiguration configuration, string venueId)
+        {
+            var api = new RuckusApi(configuration);
+            var venueRadioMaps = await api.GetVenueRadioMaps(venueId);
+            System.Console.WriteLine($"List radio maps for venue {venueId}");
+            foreach (var venueRadioMap in venueRadioMaps)
+            {
+                System.Console.WriteLine($"Name: {venueRadioMap.Name}, Is Production?: {venueRadioMap.Production}");
+            }
         }
     }
 }

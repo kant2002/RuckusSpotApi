@@ -66,5 +66,36 @@ namespace Ruckus.Spot.Api
                 }
             }
         }
+
+        /// <summary>
+        /// Get venue radio maps
+        /// </summary>
+        /// <param name="id">Id of the venue for which to get information.</param>
+        /// <returns>Sequence of <see cref="RadioMapSummary"/> assigned to the venue.</returns>
+        /// <remarks>
+        /// A venue has one or many radio maps, which contains the indoor maps and information 
+        /// about the venue's floors, zones and calibration data. These radio maps can either be 
+        /// used in production or not, determined by the production attribute. Because a 
+        /// venue can change over time, production radio maps have start_timestamp and end_timestamp 
+        /// attributes. For a production radio map currently in use, its end_timestamp will be null.
+        /// </remarks>
+        public async Task<IEnumerable<RadioMapSummary>> GetVenueRadioMaps(string id)
+        {
+            using (var client = new HttpClient())
+            {
+                var serializer = new JsonSerializer();
+                var byteArray = Encoding.UTF8.GetBytes(this.configuration.ApiToken + ":X");
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+
+                var httpResponse = await client.GetStringAsync(configuration.ServerUrl + $"venues/{id}/radio_maps.json");
+                using (var streamReader = new StringReader(httpResponse))
+                {
+                    using (var jsonReader = new JsonTextReader(streamReader))
+                    {
+                        return serializer.Deserialize<RadioMapSummary[]>(jsonReader);
+                    }
+                }
+            }
+        }
     }
 }
