@@ -98,11 +98,16 @@ namespace Ruckus.Spot.Console
             System.Console.WriteLine($"Show radio map for venue {venueId} with name {name}");
             
         }
+
         private static async Task PrintVenueLocations(RuckusApiConfiguration configuration, string venueId)
         {
             var api = new RuckusApi(configuration);
             var locations = await api.GetVenueLaskKnownLocations(venueId, 300);
             System.Console.WriteLine($"List locations for venue {venueId}");
+            foreach (var location in locations)
+            {
+                System.Console.WriteLine($"MAC: {location.Mac}, Floor: {location.FloorNumber}, Inside?: {(location.IsLocatedInside ? "Y" : "N")}, X: {location.X}, Y: {location.Y}");
+            }
         }
 
         private static async Task PrintVenueLocationsHistory(RuckusApiConfiguration configuration, string venueId)
@@ -110,6 +115,10 @@ namespace Ruckus.Spot.Console
             var api = new RuckusApi(configuration);
             var locations = await api.GetVenueLocationsByDate(venueId, DateTime.UtcNow);
             System.Console.WriteLine($"List locations for venue {venueId}");
+            foreach (var location in locations)
+            {
+                System.Console.WriteLine($"MAC: {location.Mac}, Floor: {location.FloorNumber}, Inside?: {(location.IsLocatedInside ? "Y" : "N")}, X: {location.X}, Y: {location.Y}");
+            }
         }
     }
 }
