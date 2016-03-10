@@ -1,0 +1,29 @@
+﻿{
+  "version": "1.0.0-*",
+  "description": "Ruckus.Spot.Api Class Library",
+  "authors": [ "kant" ],
+  "tags": [ "" ],
+  "projectUrl": "",
+  "licenseUrl": "",
+  
+  "frameworks": {
+    "net451": {
+      "frameworkAssemblies": {
+        "System.Configuration": "4.0.0.0" 
+      },
+      "dependencies": {
+        "System.Net.Http": "4.0.1-beta-23516"
+      }
+    },
+    "dotnet5.4": {
+      "dependencies": {
+        "System.Net.Http": "4.0.1-beta-23516",
+        "Microsoft.CSharp": "4.0.1-beta-23516",
+        "System.Collections": "4.0.11-beta-23516",
+        "System.Linq": "4.0.1-beta-23516",
+        "System.Runtime": "4.0.21-beta-23516",
+        "System.Threading": "4.0.11-beta-23516"
+      }
+    }
+  }
+}
