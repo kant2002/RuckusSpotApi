@@ -12,7 +12,7 @@ namespace Ruckus.Spot.Api
         /// Gets or sets venue identifier
         /// </summary>
         [JsonProperty("venue_id")]
-        public int Id { get; set; }
+        public string Id { get; set; }
 
         /// <summary>
         /// Gets or sets venue name.

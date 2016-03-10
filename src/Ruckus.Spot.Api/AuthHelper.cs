@@ -28,6 +28,7 @@
                 }
 
                 var data = new StringContent(requestBuilder.ToString());
+                data.Headers.Clear();
                 data.Headers.Add("Content-Type", "application/json");
                 var httpResponse = await client.PostAsync(configuration.ServerUrl + "api_keys.json", data);
                 var responseStream = await httpResponse.Content.ReadAsStreamAsync();

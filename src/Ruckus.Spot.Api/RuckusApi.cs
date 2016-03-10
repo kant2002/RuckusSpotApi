@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Ruckus.Spot.Api
@@ -27,9 +29,11 @@ namespace Ruckus.Spot.Api
             using (var client = new HttpClient())
             {
                 var serializer = new JsonSerializer();
-                var httpResponse = await client.GetAsync(configuration.ServerUrl + "venues.json");
-                var responseStream = await httpResponse.Content.ReadAsStreamAsync();
-                using (var streamReader = new StreamReader(responseStream))
+                var byteArray = Encoding.UTF8.GetBytes(this.configuration.ApiToken + ":X");
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+
+                var httpResponse = await client.GetStringAsync(configuration.ServerUrl + "venues.json");
+                using (var streamReader = new StringReader(httpResponse))
                 {
                     using (var jsonReader = new JsonTextReader(streamReader))
                     {
