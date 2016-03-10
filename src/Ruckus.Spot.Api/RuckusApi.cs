@@ -97,5 +97,30 @@ namespace Ruckus.Spot.Api
                 }
             }
         }
+
+        /// <summary>
+        /// Get radio map details
+        /// </summary>
+        /// <param name="venueId">Id of the venue for which to get information.</param>
+        /// <param name="name">Name of the radio map</param>
+        /// <returns>Information about the <see cref="RadioMap"/>.</returns>
+        public async Task<RadioMap> GetRadioMap(string venueId, string name)
+        {
+            using (var client = new HttpClient())
+            {
+                var serializer = new JsonSerializer();
+                var byteArray = Encoding.UTF8.GetBytes(this.configuration.ApiToken + ":X");
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+
+                var httpResponse = await client.GetStringAsync(configuration.ServerUrl + $"venues/{venueId}/radio_maps/{name}.json");
+                using (var streamReader = new StringReader(httpResponse))
+                {
+                    using (var jsonReader = new JsonTextReader(streamReader))
+                    {
+                        return serializer.Deserialize<RadioMap>(jsonReader);
+                    }
+                }
+            }
+        }
     }
 }
