@@ -210,3 +210,4 @@ FakesAssemblies/
 GeneratedArtifacts/
 _Pvt_Extensions/
 ModelManifest.xml
+/src/Ruckus.Spot.Console/Properties/launchSettings.json
