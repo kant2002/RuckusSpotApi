@@ -114,7 +114,7 @@ namespace Ruckus.Spot.Console
         {
             var api = new RuckusApi(configuration);
             var locations = await api.GetVenueLocationsByDate(venueId, DateTime.UtcNow);
-            System.Console.WriteLine($"List locations for venue {venueId}");
+            System.Console.WriteLine($"List historical locations for venue {venueId}");
             foreach (var location in locations)
             {
                 System.Console.WriteLine($"MAC: {location.Mac}, Floor: {location.FloorNumber}, Inside?: {(location.IsLocatedInside ? "Y" : "N")}, X: {location.X}, Y: {location.Y}");
