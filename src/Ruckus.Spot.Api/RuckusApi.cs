@@ -122,5 +122,51 @@ namespace Ruckus.Spot.Api
                 }
             }
         }
+
+        /// <summary>
+        /// Get venue radio maps
+        /// </summary>
+        /// <param name="venueId">Id of the venue for which to get information.</param>
+        /// <returns>Sequence of <see cref="RadioMapSummary"/> assigned to the venue.</returns>
+        public async Task<IEnumerable<Location>> GetVenueLocationsByDate(string venueId, DateTime date, string[] macs = null, int limit = 300000)
+        {
+            using (var client = new HttpClient())
+            {
+                var serializer = new JsonSerializer();
+                var byteArray = Encoding.UTF8.GetBytes(this.configuration.ApiToken + ":X");
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+                var httpResponse = await client.GetStringAsync(configuration.ServerUrl + $"venues/{venueId}/locations/by_date.json?date={date.ToString("YYYY-MM-DD")}");
+                using (var streamReader = new StringReader(httpResponse))
+                {
+                    using (var jsonReader = new JsonTextReader(streamReader))
+                    {
+                        return serializer.Deserialize<Location[]>(jsonReader);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Get venue radio maps
+        /// </summary>
+        /// <param name="venueId">Id of the venue for which to get information.</param>
+        /// <returns>Sequence of <see cref="RadioMapSummary"/> assigned to the venue.</returns>
+        public async Task<IEnumerable<Location>> GetVenueLaskKnownLocations(string venueId, int secondsAgo = 60, string[] macs = null)
+        {
+            using (var client = new HttpClient())
+            {
+                var serializer = new JsonSerializer();
+                var byteArray = Encoding.UTF8.GetBytes(this.configuration.ApiToken + ":X");
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+                var httpResponse = await client.GetStringAsync(configuration.ServerUrl + $"venues/{venueId}/locations/last_known.json?secondsAgo={secondsAgo}");
+                using (var streamReader = new StringReader(httpResponse))
+                {
+                    using (var jsonReader = new JsonTextReader(streamReader))
+                    {
+                        return serializer.Deserialize<Location[]>(jsonReader);
+                    }
+                }
+            }
+        }
     }
 }

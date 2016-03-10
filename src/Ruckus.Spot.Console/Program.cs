@@ -37,6 +37,12 @@ namespace Ruckus.Spot.Console
                 case "venue-radio-map-info":
                     await PrintVenueRadioMaps(configuration, args[4], args[5]);
                     break;
+                case "venue-locations":
+                    await PrintVenueLocations(configuration, args[4]);
+                    break;
+                case "venue-locations-history":
+                    await PrintVenueLocationsHistory(configuration, args[4]);
+                    break;
                 default:
                     System.Console.WriteLine($"Unknown operation {command}");
                     break;
@@ -91,6 +97,19 @@ namespace Ruckus.Spot.Console
             var venueRadioMap = await api.GetRadioMap(venueId, name);
             System.Console.WriteLine($"Show radio map for venue {venueId} with name {name}");
             
+        }
+        private static async Task PrintVenueLocations(RuckusApiConfiguration configuration, string venueId)
+        {
+            var api = new RuckusApi(configuration);
+            var locations = await api.GetVenueLaskKnownLocations(venueId, 300);
+            System.Console.WriteLine($"List locations for venue {venueId}");
+        }
+
+        private static async Task PrintVenueLocationsHistory(RuckusApiConfiguration configuration, string venueId)
+        {
+            var api = new RuckusApi(configuration);
+            var locations = await api.GetVenueLocationsByDate(venueId, DateTime.UtcNow);
+            System.Console.WriteLine($"List locations for venue {venueId}");
         }
     }
 }
