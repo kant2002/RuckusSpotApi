@@ -29,7 +29,7 @@
 
                 var data = new StringContent(requestBuilder.ToString());
                 data.Headers.Add("Content-Type", "application/json");
-                var httpResponse = await client.PostAsync(configuration.ServerUrl + "api/v1/api_keys.json", data);
+                var httpResponse = await client.PostAsync(configuration.ServerUrl + "api_keys.json", data);
                 var responseStream = await httpResponse.Content.ReadAsStreamAsync();
                 using (var streamReader = new StreamReader(responseStream))
                 {
