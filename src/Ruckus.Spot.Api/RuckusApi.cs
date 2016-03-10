@@ -42,5 +42,29 @@ namespace Ruckus.Spot.Api
                 }
             }
         }
+
+        /// <summary>
+        /// Get venue details
+        /// </summary>
+        /// <param name="id">Id of the venue for which to get information.</param>
+        /// <returns>Information about <see cref="Venue"/>.</returns>
+        public async Task<Venue> GetVenue(string id)
+        {
+            using (var client = new HttpClient())
+            {
+                var serializer = new JsonSerializer();
+                var byteArray = Encoding.UTF8.GetBytes(this.configuration.ApiToken + ":X");
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+
+                var httpResponse = await client.GetStringAsync(configuration.ServerUrl + $"venues/{id}.json");
+                using (var streamReader = new StringReader(httpResponse))
+                {
+                    using (var jsonReader = new JsonTextReader(streamReader))
+                    {
+                        return serializer.Deserialize<Venue>(jsonReader);
+                    }
+                }
+            }
+        }
     }
 }
