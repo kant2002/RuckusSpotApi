@@ -43,6 +43,9 @@ namespace Ruckus.Spot.Console
                 case "venue-locations-history":
                     await PrintVenueLocationsHistory(configuration, args[4]);
                     break;
+                case "venue-locations-stat":
+                    await PrintVenueLocationsStats(configuration, args[4]);
+                    break;
                 default:
                     System.Console.WriteLine($"Unknown operation {command}");
                     break;
@@ -102,9 +105,12 @@ namespace Ruckus.Spot.Console
         private static async Task PrintVenueLocations(RuckusApiConfiguration configuration, string venueId)
         {
             var api = new RuckusApi(configuration);
+            var startDate = DateTime.UtcNow;
             var locations = await api.GetVenueLaskKnownLocations(venueId, 300);
+            var endDate = DateTime.UtcNow;
             System.Console.WriteLine($"List locations for venue {venueId}");
-            foreach (var location in locations)
+            System.Console.WriteLine($"Execution time {(endDate - startDate).TotalMilliseconds}");
+            foreach (var location in locations.OrderBy(_ => _.Mac))
             {
                 System.Console.WriteLine($"MAC: {location.Mac}, Floor: {location.FloorNumber}, Inside?: {(location.IsLocatedInside ? "Y" : "N")}, X: {location.X}, Y: {location.Y}");
             }
@@ -113,12 +119,31 @@ namespace Ruckus.Spot.Console
         private static async Task PrintVenueLocationsHistory(RuckusApiConfiguration configuration, string venueId)
         {
             var api = new RuckusApi(configuration);
+            var startDate = DateTime.UtcNow;
             var locations = await api.GetVenueLocationsByDate(venueId, DateTime.UtcNow);
+            var endDate = DateTime.UtcNow;
             System.Console.WriteLine($"List historical locations for venue {venueId}");
+            System.Console.WriteLine($"Execution time {(endDate - startDate).TotalMilliseconds}");
             foreach (var location in locations)
             {
                 System.Console.WriteLine($"MAC: {location.Mac}, Floor: {location.FloorNumber}, Inside?: {(location.IsLocatedInside ? "Y" : "N")}, X: {location.X}, Y: {location.Y}");
             }
+        }
+        private static async Task PrintVenueLocationsStats(RuckusApiConfiguration configuration, string venueId)
+        {
+            var api = new RuckusApi(configuration);
+            var result = new double[1000];
+            for (var i = 0; i < result.Length; i++)
+            {
+                var startDate = DateTime.UtcNow;
+                var locations = await api.GetVenueLaskKnownLocations(venueId, 300);
+                var endDate = DateTime.UtcNow;
+                result[i] = (endDate - startDate).TotalMilliseconds;
+            }
+
+            System.Console.WriteLine($"Min: {result.Min()}, Max: {result.Max()}, Avg: {result.Average()}");
+            var data = string.Join(Environment.NewLine, result);
+            System.Console.WriteLine(data);
         }
     }
 }
