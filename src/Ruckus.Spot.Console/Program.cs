@@ -38,7 +38,22 @@ namespace Ruckus.Spot.Console
                     await PrintVenueRadioMaps(configuration, args[4], args[5]);
                     break;
                 case "venue-locations":
-                    await PrintVenueLocations(configuration, args[4]);
+                    bool automated = false;
+                    int duration = 60;
+                    if (args.Length >= 6)
+                    {
+                        if (args.Skip(5).Any(_ => _ == "--automated"))
+                        {
+                            automated = true;
+                        }
+
+                        if (!args.Skip(5).Any(_ => int.TryParse(_, out duration)))
+                        {
+                            duration = 60;
+                        }
+                    }
+
+                    await PrintVenueLocations(configuration, args[4], duration, automated);
                     break;
                 case "venue-locations-history":
                     await PrintVenueLocationsHistory(configuration, args[4]);
@@ -102,17 +117,22 @@ namespace Ruckus.Spot.Console
             
         }
 
-        private static async Task PrintVenueLocations(RuckusApiConfiguration configuration, string venueId)
+        private static async Task PrintVenueLocations(RuckusApiConfiguration configuration, string venueId, int duration, bool automationFormat)
         {
             var api = new RuckusApi(configuration);
             var startDate = DateTime.UtcNow;
-            var locations = await api.GetVenueLaskKnownLocations(venueId, 300);
+            var locations = await api.GetVenueLaskKnownLocations(venueId, duration);
             var endDate = DateTime.UtcNow;
-            System.Console.WriteLine($"List locations for venue {venueId}");
-            System.Console.WriteLine($"Execution time {(endDate - startDate).TotalMilliseconds}");
+            if (!automationFormat)
+            {
+                System.Console.WriteLine($"List locations for venue {venueId}");
+                System.Console.WriteLine($"Execution time {(endDate - startDate).TotalMilliseconds}");
+                System.Console.WriteLine($"Date,Duration,MAC,Floor,Inside,X,Y");
+            }
+
             foreach (var location in locations.OrderBy(_ => _.Mac))
             {
-                System.Console.WriteLine($"MAC: {location.Mac}, Floor: {location.FloorNumber}, Inside?: {(location.IsLocatedInside ? "Y" : "N")}, X: {location.X}, Y: {location.Y}");
+                System.Console.WriteLine($"{startDate.ToString("s")},{duration},{location.Mac},{location.FloorNumber},{(location.IsLocatedInside ? "Y" : "N")},{location.X},{location.Y}");
             }
         }
 
