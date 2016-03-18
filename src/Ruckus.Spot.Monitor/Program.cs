@@ -13,10 +13,16 @@ namespace Ruckus.Spot.Monitor
         {
             var manager = new PushApiManager(args[0], args[1], args[2]);
             manager.Connect();
-            while(true)
+            manager.OnLocationReceived += Manager_OnLocationReceived;
+            while (true)
             {
                 Thread.Sleep(1000);
             }
+        }
+
+        private static void Manager_OnLocationReceived(LocationMessage msg)
+        {
+            Console.WriteLine($"{DateTime.UtcNow.ToString("s")};{msg.floor_number};{msg.mac};{msg.x};{msg.y}");
         }
     }
 }

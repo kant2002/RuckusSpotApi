@@ -11,7 +11,7 @@
   },
 
   "dependencies": {
-    "Ruckus.Spot.PushApi": "0.9.0"
+    "Ruckus.Spot.PushApi": "0.9.1"
   },
 
   "commands": {
