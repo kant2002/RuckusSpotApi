@@ -132,7 +132,7 @@ namespace Ruckus.Spot.Console
 
             foreach (var location in locations.OrderBy(_ => _.Mac))
             {
-                System.Console.WriteLine($"{startDate.ToString("s")},{duration},{location.Mac},{location.FloorNumber},{(location.IsLocatedInside ? "Y" : "N")},{location.X},{location.Y}");
+                System.Console.WriteLine($"{startDate.ToString("s")};{duration};{location.Mac};{location.FloorNumber};{(location.IsLocatedInside ? "Y" : "N")};{location.X};{location.Y}");
             }
         }
 
@@ -152,13 +152,17 @@ namespace Ruckus.Spot.Console
         private static async Task PrintVenueLocationsStats(RuckusApiConfiguration configuration, string venueId)
         {
             var api = new RuckusApi(configuration);
-            var result = new double[1000];
+            var result = new double[10 * 1000];
             for (var i = 0; i < result.Length; i++)
             {
                 var startDate = DateTime.UtcNow;
-                var locations = await api.GetVenueLaskKnownLocations(venueId, 300);
+                var locations = await api.GetVenueLaskKnownLocations(venueId, 10);
                 var endDate = DateTime.UtcNow;
                 result[i] = (endDate - startDate).TotalMilliseconds;
+                if (i % 100 == 99)
+                {
+                    System.Console.WriteLine($"Min: {result.Take(i).Min()}, Max: {result.Take(i).Max()}, Avg: {result.Take(i).Average()}");
+                }
             }
 
             System.Console.WriteLine($"Min: {result.Min()}, Max: {result.Max()}, Avg: {result.Average()}");

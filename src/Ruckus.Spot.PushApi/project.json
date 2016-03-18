@@ -1,0 +1,17 @@
+﻿{
+  "version": "1.0.0-*",
+  "description": "Ruckus.Spot.PushApi Class Library",
+  "authors": [ "kant" ],
+  "tags": [ "" ],
+  "projectUrl": "",
+  "licenseUrl": "",
+
+  "frameworks": {
+    "net451": {
+      "dependencies": {
+        "M2Mqtt": "4.3.0",
+        "protobuf-net": "2.0.0.668"
+      }
+    }
+  }
+}

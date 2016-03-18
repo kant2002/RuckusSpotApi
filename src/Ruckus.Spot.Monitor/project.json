@@ -1,0 +1,24 @@
+﻿{
+  "version": "1.0.0-*",
+  "description": "Ruckus.Spot.Monitor Console Application",
+  "authors": [ "kant" ],
+  "tags": [ "" ],
+  "projectUrl": "",
+  "licenseUrl": "",
+
+  "compilationOptions": {
+    "emitEntryPoint": true
+  },
+
+  "dependencies": {
+    "Ruckus.Spot.PushApi": ""
+  },
+
+  "commands": {
+    "Ruckus.Spot.Monitor": "Ruckus.Spot.Monitor"
+  },
+
+  "frameworks": {
+    "net451": { }
+  }
+}
