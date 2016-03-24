@@ -14,10 +14,22 @@ namespace Ruckus.Spot.Monitor
             var manager = new PushApiManager(args[0], args[1], args[2]);
             manager.Connect();
             manager.OnLocationReceived += Manager_OnLocationReceived;
+            manager.ConnectionClosed += Manager_ConnectionClosed;
+            manager.Subscribed += Manager_Subscribed;
             while (true)
             {
                 Thread.Sleep(1000);
             }
+        }
+
+        private static void Manager_Subscribed(object sender, uPLibrary.Networking.M2Mqtt.Messages.MqttMsgSubscribedEventArgs e)
+        {
+            Console.WriteLine($"{DateTime.UtcNow.ToString("s")} Subscribed");
+        }
+
+        private static void Manager_ConnectionClosed(object sender, EventArgs e)
+        {
+            Console.WriteLine($"{DateTime.UtcNow.ToString("s")} Connection closed");
         }
 
         private static void Manager_OnLocationReceived(LocationMessage msg)

@@ -30,12 +30,42 @@ namespace Ruckus.Spot.PushApi
 
         public event Action<LocationMessage> OnLocationReceived;
 
+        public event EventHandler ConnectionClosed;
+
+        public event EventHandler<MqttMsgSubscribedEventArgs> Subscribed;
+ 
         public void Connect()
         {
             string clientId = Guid.NewGuid().ToString();
-            this.client.Connect(clientId, this.login, this.password);
+            this.client.ConnectionClosed += Client_ConnectionClosed;
+            this.client.MqttMsgSubscribed += Client_MqttMsgSubscribed;
+            this.client.MqttMsgPublishReceived += OnMqttMsgPublishReceived;
+
+            var errorCode = this.client.Connect(clientId, this.login, this.password);
+            if (errorCode != 0)
+            {
+                throw new InvalidOperationException("Could not connect");
+            }
+
             this.client.Subscribe(new string[] { "1.0.0/LOC/SPOT_GPB/#" }, new byte[] { MqttMsgBase.QOS_LEVEL_EXACTLY_ONCE });
-            client.MqttMsgPublishReceived += OnMqttMsgPublishReceived;
+        }
+
+        private void Client_MqttMsgSubscribed(object sender, MqttMsgSubscribedEventArgs e)
+        {
+            var handler = this.Subscribed;
+            if (handler != null)
+            {
+                handler(sender, e);
+            }
+        }
+
+        private void Client_ConnectionClosed(object sender, EventArgs e)
+        {
+            var handler = this.ConnectionClosed;
+            if (handler != null)
+            {
+                handler(sender, e);
+            }
         }
 
         private void OnMqttMsgPublishReceived(object sender, MqttMsgPublishEventArgs e)
