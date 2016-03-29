@@ -1,19 +1,25 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Ruckus.Spot.Api
+﻿namespace Ruckus.Spot.Api
 {
+    using Newtonsoft.Json;
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Net.Http;
+    using System.Net.Http.Headers;
+    using System.Text;
+    using System.Threading.Tasks;
+
+    /// <summary>
+    /// Class for connection to the Ruckus SPoT API
+    /// </summary>
     public class RuckusApi
     {
         private RuckusApiConfiguration configuration;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RuckusApi"/> class.
+        /// </summary>
+        /// <param name="configuration">Configuration to connect to server.</param>
         public RuckusApi(RuckusApiConfiguration configuration)
         {
             this.configuration = configuration;
@@ -155,10 +161,10 @@ namespace Ruckus.Spot.Api
         {
             using (var client = new HttpClient())
             {
-                var serializer = new JsonSerializer();
                 var byteArray = Encoding.UTF8.GetBytes(this.configuration.ApiToken + ":X");
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
                 var httpResponse = await client.GetStringAsync(configuration.ServerUrl + $"venues/{venueId}/locations/last_known.json?secondsAgo={secondsAgo}");
+                var serializer = new JsonSerializer();
                 using (var streamReader = new StringReader(httpResponse))
                 {
                     using (var jsonReader = new JsonTextReader(streamReader))
@@ -166,6 +172,22 @@ namespace Ruckus.Spot.Api
                         return serializer.Deserialize<Location[]>(jsonReader);
                     }
                 }
+            }
+        }
+
+        /// <summary>
+        /// Get floor image on the Ruckus API server
+        /// </summary>
+        /// <param name="imageUrl">Image URL on the Ruskus SPoT server.</param>
+        /// <returns>Task which return <see cref="Stream"/> with image data.</returns>
+        public async Task<Stream> GetFloorImage(string imageUrl)
+        {
+            using (var client = new HttpClient())
+            {
+                var serializer = new JsonSerializer();
+                var byteArray = Encoding.UTF8.GetBytes(this.configuration.ApiToken + ":X");
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+                return await client.GetStreamAsync(imageUrl);
             }
         }
     }
