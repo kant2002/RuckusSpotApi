@@ -80,7 +80,7 @@ namespace Ruckus.Spot.PushApi
         /// <summary>
         /// Disconnects from the Ruckus Push API server.
         /// </summary>
-        private void Disconnect()
+        public void Disconnect()
         {
             if (!this.client.IsConnected)
             {
